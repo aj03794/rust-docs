@@ -1,0 +1,2 @@
+- Enums allow you to define a type by *enumerating* it's possibe values
+- Most similar to *algebraic data types* in functional languages like F#, OCaml, and Haskell
