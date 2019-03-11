@@ -1,0 +1,3 @@
+- Allows you to store more than one value in a single data structure that puts all values next to each other in memory
+- Can only store values of the same type
+- Useful when you have a list of items, such as the lines of text in a file or items in a shopping cart
