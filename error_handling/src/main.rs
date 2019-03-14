@@ -1,9 +1,15 @@
 use std::fs::File;
 use std::io;
+use std::fs;
 use std::io::Read;
 use std::io::ErrorKind;
+use std::error::Error;
 
-fn main() {
+
+// Main function can return a Result<T, E> if necessary
+// Box<dyn Error> is called a "trait object"
+// Can read this to mean "any kind of error"
+fn main() -> Result<(), Box<dyn Error>> {
     // thread 'main' panicked at 'crash and burn', src/main.rs:2:5
     // note: Run with `RUST_BACKTRACE=1` environment variable to display a backtrace.
     // panic!("crash and burn");
@@ -36,7 +42,7 @@ fn main() {
     // The type of E used in the error value is std::io::Error
     // let f: u32 = File::open("hello.txt");
 
-    let f = File::open("hello.txt");
+    // let f = File::open("hello.txt");
 
     // thread 'main' panicked at 'There was a problem opening the file Os 
     //  code: 2, kind: NotFound, message: "No such file or directory" }', src/main.rs:41:13
@@ -109,5 +115,41 @@ fn main() {
             Err(e) => Err(e)
         }
     }
+
+    // **Shortcut for Propagating Errors: the ? Operator
+    // If the value of the Result is an `Ok`, the value inside the `Ok`
+    // will get returned from this expression
+    // If the value is an `Err`, the `Err` will be returned from the whole
+    // function as if we had used the `return` keyword so the error value
+    // gets propagated to the calling code
+    // If an error occurs, the ? will return early out of the whole function
+    fn read_username_from_file_improved() -> Result<String, io::Error> {
+        let mut f = File::open("hello.txt")?;
+        let mut s = String::new();
+        f.read_to_string(&mut s)?;
+        Ok(s)
+    }
+
+    fn read_username_from_file_improved_again() -> Result<String, io::Error> {
+        let mut s = String::new();
+        File::open("hello.txt")?.read_to_string(&mut s)?;
+        Ok(s)
+    }
+
+    // Rust provides a convenience function called fs::read_to_string
+    // that will open the file, create a new `String`, read the contents of the file,
+    // and put the contents into that `String` and then return it
+    fn read_username_from_file_final() -> Result<String, io::Error> {
+        fs::read_to_string("hello.txt")
+    }
+
+    // **The ? Operator Can Only Be Used in Functions That Return Result
+    // The ? operator can only be used in functions that have a return type of Result
+    // THIS WON'T COMPILED BECAUSE RETURN TYPE FROM FUNCTION IS NOT RESULT
+    // the `?` operator can only be used in a function that returns `Result` 
+    // or `Option` (or another type that implements `std::ops::Try`)
+    let f = File::open("hello.txt")?;
+
+    Ok(())
 
 }
